@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
   db:
     container_name: postgres_fdb_container
-    image: postgres:16.4
+    image: postgres:17.0
     restart: always
     volumes:
       - pgdata_sovareq:/var/lib/postgresql/data
@@ -11,11 +9,12 @@ services:
       - ~/data/.env
 
   bot:
+    ports:
+        - 5000:5000
     container_name: fdb_bot_container
     build:
       context: .
     restart: always
-    network_mode: host
     volumes:
       - ~/data:/Feedback-Bot/data
     env_file:
@@ -24,4 +23,4 @@ services:
       - db
 
 volumes:
-  pgdata_sovarouter:
+  pgdata_sovareq:
