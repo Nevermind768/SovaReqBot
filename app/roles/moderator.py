@@ -56,15 +56,11 @@ async def add_any(callback: CallbackQuery, state: FSMContext):
     user_type = callback.data.split("_")[1]
     if user_type == for_user:
         await state.set_state(BanUser.term)
-        await callback.message.edit_text(
-            label.CHOOSE_BAN_TERM, reply_markup=await get_ban_terms()
-        )
+        await callback.message.edit_text(label.CHOOSE_BAN_TERM, reply_markup=await get_ban_terms())
     elif user_type == Role.MODERATOR.name:
         await state.set_state(PickModerator.id)
         await callback.message.answer(label.INPUT_MODER_ID)
-        await callback.bot.delete_message(
-            callback.message.chat.id, callback.message.message_id
-        )
+        await callback.bot.delete_message(callback.message.chat.id, callback.message.message_id)
 
 
 @moderator.callback_query(F.data.startswith("return_panel_"))
@@ -94,9 +90,7 @@ async def users(message: Message, state: FSMContext):
         state (FSMContext): _description_
     """
     await state.clear()
-    await message.answer(
-        label.CHOOSE_ACTION, reply_markup=await get_manage_panel(for_user)
-    )
+    await message.answer(label.CHOOSE_ACTION, reply_markup=await get_manage_panel(for_user))
 
 
 # Блокировка пользователя
@@ -111,9 +105,7 @@ async def choose_ban_term(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await state.update_data(term=int(callback.data.split("_")[1]))
     await state.set_state(BanUser.reason)
-    await callback.message.edit_text(
-        label.INPUT_BAN_REASON, reply_markup=await get_ban_reasons()
-    )
+    await callback.message.edit_text(label.INPUT_BAN_REASON, reply_markup=await get_ban_reasons())
 
 
 @moderator.callback_query(F.data.startswith("reason_"), BanUser.reason)
@@ -128,9 +120,7 @@ async def get_ban_reason(callback: CallbackQuery, state: FSMContext):
     await state.update_data(reason=label.BAN_REASONS[int(callback.data.split("_")[1])])
     await state.set_state(BanUser.ids)
     await callback.message.answer(label.INPUT_USER_ID_BAN)
-    await callback.bot.delete_message(
-        callback.message.chat.id, callback.message.message_id
-    )
+    await callback.bot.delete_message(callback.message.chat.id, callback.message.message_id)
 
 
 @moderator.message(StateFilter(BanUser.ids, UnbanUser.ids))
@@ -222,9 +212,7 @@ async def unban_user(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UnbanUser.ids)
     await callback.message.answer(label.INPUT_USER_ID_UNBAN)
 
-    await callback.bot.delete_message(
-        callback.message.chat.id, callback.message.message_id
-    )
+    await callback.bot.delete_message(callback.message.chat.id, callback.message.message_id)
 
 
 # Работа с обращениями
@@ -253,9 +241,7 @@ async def download_appeals(callback: CallbackQuery):
     try:
         file_name = await save_appeals(callback.from_user.id, is_new)
         if not file_name:
-            await callback.answer(
-                label.EMPTY_NEW_APPEALS if is_new else label.EMPTY_ALL_APPEALS
-            )
+            await callback.answer(label.EMPTY_NEW_APPEALS if is_new else label.EMPTY_ALL_APPEALS)
             logger.info(f"Список обращений (is_new={is_new}) пуст")
             return
         await callback.answer()

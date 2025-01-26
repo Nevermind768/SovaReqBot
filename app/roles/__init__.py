@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class Role(Enum):
-    """Класс Enum ролей пользователей.
-    """
+    """Класс Enum ролей пользователей."""
+
     USER = 0
     MODERATOR = 1
     ADMIN = 2

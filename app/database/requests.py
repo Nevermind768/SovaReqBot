@@ -1,5 +1,6 @@
 import hashlib
 from datetime import datetime, timedelta, timezone
+from os import getenv
 
 import pandas as pd
 from sqlalchemy import and_, func, select, update
@@ -125,9 +126,7 @@ async def get_profile(user_id):
     """
     logger.info(f"Получение профиля user (id={user_id})")
     async with async_session() as session:
-        profile = await session.scalar(
-            select(UserInfo).where(UserInfo.userId == user_id)
-        )
+        profile = await session.scalar(select(UserInfo).where(UserInfo.userId == user_id))
         return profile
 
 
@@ -138,12 +137,10 @@ async def set_profile(user_id, new_profile: dict):
         user_id (int): Идентификатор пользователя.
         new_profile (dict): Имя, контакт.
     """
-    fullName = new_profile.get("full_name")[:UserInfoLen.FULLNAME]
-    contact = new_profile.get("contact")[:UserInfoLen.CONTACT]
+    fullName = new_profile.get("full_name")[: UserInfoLen.FULLNAME]
+    contact = new_profile.get("contact")[: UserInfoLen.CONTACT]
     async with async_session() as session:
-        profile = await session.scalar(
-            select(UserInfo).where(UserInfo.userId == user_id)
-        )
+        profile = await session.scalar(select(UserInfo).where(UserInfo.userId == user_id))
         if profile:
             logger.info(f"Обновление профиля user (id={user_id})")
             profile.fullName = fullName
@@ -169,10 +166,10 @@ async def add_application(user_id, msg_id, data: dict):
         data (dict): Данные обращения.
     """
     logger.info(f"Добавление обращения user (id={user_id})")
-    address = data.get("address")[:AppLen.ADDRESS]
-    body = data.get("body", "")[:AppLen.BODY]
-    police = data.get("police")[:AppLen.POLICE]
-    attachments = data.get("attachments", "")[:AppLen.ATTACHMENTS]
+    address = data.get("address")[: AppLen.ADDRESS]
+    body = data.get("body", "")[: AppLen.BODY]
+    police = data.get("police")[: AppLen.POLICE]
+    attachments = data.get("attachments", "")[: AppLen.ATTACHMENTS]
     async with async_session() as session:
         session.add(
             Application(
@@ -208,6 +205,8 @@ async def get_role(user_id, quiet=True) -> Role:
             return Role.USER
         else:
             raise DBKeyError()
+    if getenv("ADMIN") == str(user_id):
+        return Role.ADMIN
     return Role.from_value(user.role)
 
 
@@ -240,7 +239,7 @@ async def get_applications(only_new):
         after_date = datetime.min
         if only_new:
             after_date = await get_lastDbReq()
-        stmt = select(Application).where(Application.datetime > after_date)
+        stmt = select(Application).where(Application.dt > after_date)
         appeals = await session.scalars(stmt)
         return appeals.all()
 
@@ -255,9 +254,7 @@ async def save_appeals(user_id, only_new):
     Returns:
         str: Excel file path.
     """
-    logger.info(
-        f"Получение обращений user'ом (id={user_id}) для сохранения (only_new={only_new})"
-    )
+    logger.info(f"Получение обращений user'ом (id={user_id}) для сохранения (only_new={only_new})")
     async with async_session() as session:
         dt = datetime.now(timezone.utc)
         after_date = datetime.min
@@ -266,8 +263,8 @@ async def save_appeals(user_id, only_new):
         query = (
             select(UserInfo, Application)
             .join(UserInfo, Application.userId == UserInfo.userId)
-            .where(Application.datetime > after_date)
-            .order_by(Application.datetime.asc())
+            .where(Application.dt > after_date)
+            .order_by(Application.dt.asc())
         )
         appeals = await session.execute(query)
         data = []
@@ -279,7 +276,7 @@ async def save_appeals(user_id, only_new):
                     "Id": user_info.userId,
                     "Полное имя": user_info.fullName,
                     "Контакт": user_info.contact,
-                    "Дата обращения": application.datetime.replace(tzinfo=None),
+                    "Дата обращения": application.dt.replace(tzinfo=None),
                     "Категория": application.category,
                     "Обращение": application.body,
                     "Полиция": application.police,
@@ -292,9 +289,7 @@ async def save_appeals(user_id, only_new):
         file_name = f"Appeals {dt.strftime('%y.%m.%d_%H-%M-%S')}.xlsx"
         logger.info("Генерация excel")
         df.to_excel(file_name, index=False)
-        await session.execute(
-            update(User).where(User.id == user_id).values(lastDbReq=dt)
-        )
+        await session.execute(update(User).where(User.id == user_id).values(lastDbReq=dt))
         await session.commit()
         return file_name
 
@@ -374,7 +369,5 @@ async def get_hash_link(hash: str):
         str: Ссылка.
     """
     async with async_session() as session:
-        link = await session.scalar(
-            select(Attachment.link).where(Attachment.hash == hash)
-        )
+        link = await session.scalar(select(Attachment.link).where(Attachment.hash == hash))
         return link

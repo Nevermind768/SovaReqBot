@@ -32,7 +32,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     role: Mapped[int] = mapped_column(SmallInteger, default=0)
-    regAt: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
+    regAt: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now()
+    )
     banStart: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     banEnd: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     banBy: Mapped[int] = mapped_column(BigInteger, ForeignKey("user.id"), nullable=True)
@@ -63,10 +65,10 @@ class Application(Base):
 
     __tablename__ = "application"
 
-    msgId: Mapped[int] = mapped_column(primary_key=True)
+    msgId: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     userId: Mapped[int] = mapped_column(BigInteger, ForeignKey("user.id"), primary_key=True)
     status: Mapped[int] = mapped_column(SmallInteger, default=0)
-    datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
+    dt: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now())
     category: Mapped[str] = mapped_column(String(AppLen.CATEGORY))
     address: Mapped[str] = mapped_column(String(AppLen.ADDRESS))
     body: Mapped[str] = mapped_column(String(AppLen.BODY), nullable=True)

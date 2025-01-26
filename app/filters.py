@@ -1,8 +1,8 @@
-from aiogram.types import Message
 from aiogram.filters import Filter
+from aiogram.types import Message
 
-from app.roles import Role
 from app.database.requests import get_role
+from app.roles import Role
 
 
 class RoleFilter(Filter):
@@ -11,6 +11,7 @@ class RoleFilter(Filter):
     Args:
         Filter (_type_): _description_
     """
+
     def __init__(self, role: Role):
         """Назначение роли.
 
