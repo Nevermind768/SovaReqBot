@@ -4,9 +4,13 @@ RUN apt-get update
 
 WORKDIR /Feedback-Bot/bin
 
-COPY ./requirements.txt /Feedback-Bot/bin/requirements.txt
-RUN pip install -r requirements.txt
+COPY pyproject.toml poetry.lock* ./
 
-COPY . /Feedback-Bot/bin
+RUN python -m pip install --no-cache-dir poetry==1.8.3 \
+    && poetry config virtualenvs.create false \
+    && poetry install --without dev --no-interaction --no-ansi \
+    && rm -rf $(poetry config cache-dir)/{cache,artifacts}
+
+COPY . .
 
 ENTRYPOINT ["python3", "-B", "-m", "app"]
