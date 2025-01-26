@@ -6,7 +6,7 @@ services:
     image: postgres:16.4
     restart: always
     volumes:
-      - ~/data/db/${DB_NAME}:/var/lib/postgresql/data
+      - ~/data/db/${POSTGRES_DB}:/var/lib/postgresql/data
     env_file:
       - ~/data/.env
 
