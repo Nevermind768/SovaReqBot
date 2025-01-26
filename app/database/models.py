@@ -9,7 +9,7 @@ from app.database import AppLen, AttachmentLen, UserInfoLen, UserLen
 
 engine = create_async_engine(
     url=f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}\
-@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('DB_NAME')}",
+@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}",
     echo=False,
     pool_pre_ping=True,
 )
