@@ -8,8 +8,8 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from app.database import AppLen, AttachmentLen, UserInfoLen, UserLen
 
 engine = create_async_engine(
-    url=f"postgresql+asyncpg://{os.getenv('PG_USER')}:{os.getenv('PG_PASSWORD')}\
-@{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/{os.getenv('DB_NAME')}",
+    url=f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}\
+@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('DB_NAME')}",
     echo=False,
     pool_pre_ping=True,
 )
