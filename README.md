@@ -15,4 +15,4 @@
 ```
 2. В папке `~/data` настройте `.env` и сгенерируйте ключи командой
 `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
-1. Запустите файл `Feedback-Bot/update.zsh`
+1. Запустите с помощтю `docker compose up`
