@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: postgres_fdb_container
+    image: postgres:16.4
+    restart: always
+    volumes:
+      - ~/data/db/${DB_NAME}:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+
+  bot:
+    container_name: fdb_bot_container
+    build:
+      context: .
+    restart: always
+    network_mode: host
+    volumes:
+      - ~/data:/Feedback-Bot/data
+    env_file:
+      - ~/data/.env
+    depends_on:
+      - db
