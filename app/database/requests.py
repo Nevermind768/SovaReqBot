@@ -279,7 +279,7 @@ async def save_appeals(user_id, only_new):
                     "Дата обращения": application.dt.replace(tzinfo=None),
                     "Категория": application.category,
                     "Обращение": application.body,
-                    "Полиция": application.police,
+                    "Доп. информация": application.police,
                     "Приложения": application.attachments,
                 }
             )
