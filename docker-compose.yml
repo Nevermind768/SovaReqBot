@@ -6,7 +6,7 @@ services:
     image: postgres:16.4
     restart: always
     volumes:
-      - ~/data/db/${POSTGRES_DB}:/var/lib/postgresql/data
+      - pgdata_sovareq:/var/lib/postgresql/data
     env_file:
       - ~/data/.env
 
@@ -22,3 +22,6 @@ services:
       - ~/data/.env
     depends_on:
       - db
+
+volumes:
+  pgdata_sovarouter:
